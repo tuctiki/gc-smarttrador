@@ -15,7 +15,10 @@
 # [START gae_python38_app]
 # [START gae_python3_app]
 from flask import Flask
+from flask import request
+from utilities.sina_fin import get_name, get_price
 
+REQUEST_PARAM_QUOTE = 'quote'
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
 # called `app` in `main.py`.
@@ -26,6 +29,25 @@ app = Flask(__name__)
 def hello():
     """Return a friendly HTTP greeting."""
     return 'Hello World!'
+
+@app.errorhandler(404)
+def page_not_found():
+    """Return a custom 404 error."""
+    return 'Sorry, nothing at this URL.', 404
+
+
+@app.route('/price')
+def get_price_api():
+    """Returns the current price of the specified quote"""
+    quote = request.args.get(REQUEST_PARAM_QUOTE)
+    return get_price(quote)
+
+
+@app.route('/name')
+def get_name_api():
+    """Returns name of the specified quote"""
+    quote = request.args.get(REQUEST_PARAM_QUOTE)
+    return get_name(quote)
 
 
 if __name__ == '__main__':
