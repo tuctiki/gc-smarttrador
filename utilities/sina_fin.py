@@ -1,7 +1,7 @@
 import re
 import urllib.request
 
-SINA_BASE_INFO_API_TEMPLATE = "http://hq.sinajs.cn/list=%s"
+SINA_BASE_INFO_API_TEMPLATE = "https://hq.sinajs.cn/list=%s"
 SINA_BASE_INFO_RESPONSE_PARSER = re.compile(r'(?<=")[^\']+(?=")')
 
 
@@ -53,9 +53,10 @@ def get_quote_info(quote):
     # compose request api url
     request_api_url = compose_request_url(quote)
     # get response body
-    req = urllib.request.urlopen(request_api_url)
+    req = urllib.request.Request(request_api_url)
+    req.add_header('Referer', 'https://finance.sina.cn/')
     # print req.headers['content-type']
-    response = str(req.read(), encoding="GBK")
+    response = str(urllib.request.urlopen(req).read(), encoding="GBK")
     # extract info
     m = SINA_BASE_INFO_RESPONSE_PARSER.search(response)
     if m:
